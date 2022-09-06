@@ -20,4 +20,12 @@ export class ProductService {
   createNewProduct(product: Product): Observable<Product> {
     return this.httpClient.post<Product>(API_URL + "/product/create", product);
   }
+
+  getAllPageProducts(pageNumber: number): Observable<Product[]> {
+    return this.httpClient.get<Product[]>(API_URL + "/product/page?page=" + pageNumber);
+  }
+
+  findProductById(id: string): Observable<Product> {
+    return this.httpClient.get<Product>(API_URL + '/product/detail/' + id);
+  }
 }

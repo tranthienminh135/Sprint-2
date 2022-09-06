@@ -43,7 +43,7 @@ export class ProductCreateComponent implements OnInit {
   createForm() {
     this.productForm = new FormGroup({
       name: new FormControl('', [Validators.required]),
-      releaseTime: new FormControl('', [Validators.required]),
+      manufactureTime: new FormControl('', [Validators.required]),
       origin: new FormControl('', [Validators.required]),
       price: new FormControl('', [Validators.required]),
       quantity: new FormControl('', [Validators.required]),
@@ -76,7 +76,7 @@ export class ProductCreateComponent implements OnInit {
       this.checkErrorPrice();
       this.checkErrorOrigin();
       this.checkErrorQuantity();
-      this.checkErrorReleaseTime();
+      this.checkErrorManufactureTime();
       this.checkErrorCategory();
       this.chooseFile();
       this.checkErrorWarrantyPeriod();
@@ -144,10 +144,10 @@ export class ProductCreateComponent implements OnInit {
     }
   }
 
-  checkErrorReleaseTime() {
+  checkErrorManufactureTime() {
     let dataToggle = $('[data-toggle="releaseTime"]');
     if (this.productForm.controls.releaseTime.hasError('required')) {
-      dataToggle.attr('data-content', 'Thời gian phát hành sản phẩm không được để trống.');
+      dataToggle.attr('data-content', 'Ngày sản xuất sản phẩm không được để trống.');
       setTimeout(()=>{
         dataToggle.popover('hide');
       }, 2000)

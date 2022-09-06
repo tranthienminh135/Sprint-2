@@ -12,7 +12,6 @@ import java.util.Objects;
 @Entity
 @Getter
 @Setter
-@ToString
 @RequiredArgsConstructor
 public class Product {
     @Id
@@ -22,6 +21,8 @@ public class Product {
     private String name;
 
     private Date releaseTime;
+
+    private Date manufactureTime;
 
     private String origin;
 

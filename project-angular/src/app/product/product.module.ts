@@ -6,10 +6,11 @@ import {ShareModule} from '../share/share.module';
 import {ProductListComponent} from './product-list/product-list.component';
 import {ProductCreateComponent} from './product-create/product-create.component';
 import {CKEditorModule} from '@ckeditor/ckeditor5-angular';
+import { ProductDetailComponent } from './product-detail/product-detail.component';
 
 
 @NgModule({
-  declarations: [ProductListComponent, ProductCreateComponent],
+  declarations: [ProductListComponent, ProductCreateComponent, ProductDetailComponent],
     imports: [
         CommonModule,
         ProductRoutingModule,

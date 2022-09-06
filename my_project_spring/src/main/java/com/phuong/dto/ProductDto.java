@@ -16,6 +16,8 @@ public class ProductDto {
 
     private Date releaseTime;
 
+    private Date manufactureTime;
+
     private String origin;
 
     private Double price;

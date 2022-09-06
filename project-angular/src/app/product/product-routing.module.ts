@@ -4,13 +4,17 @@ import {ProductListComponent} from './product-list/product-list.component';
 import {AdminGuard} from '../user/auth/admin.guard';
 import {Page404Component} from '../error/page404/page404.component';
 import {ProductCreateComponent} from './product-create/product-create.component';
+import {ProductDetailComponent} from './product-detail/product-detail.component';
 
 
 const routes: Routes = [
   {
     path: 'product/list',
-    component: ProductListComponent,
-    canActivate: [AdminGuard]
+    component: ProductListComponent
+  },
+  {
+    path: 'product/detail/:id',
+    component: ProductDetailComponent
   },
   {
     path: 'product/create',

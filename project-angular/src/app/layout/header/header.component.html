@@ -19,10 +19,10 @@
           </div>
           <div class="navbar-nav ml-auto py-0 text-center">
             <a [routerLink]="['/home']"  class="nav-item nav-link active">Trang chủ</a>
+            <a [routerLink]="['/product/list']"  class="nav-item nav-link">Danh sách sản phẩm</a>
             <div class="nav-item dropdown" *ngIf="role == 'ROLE_ADMIN' && loginStatus == true">
               <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Quản lý sản phẩm</a>
               <div class="dropdown-menu rounded-0 m-0">
-                <a [routerLink]="['/product/list']" class="dropdown-item">Danh sách sản phẩm</a>
                 <a [routerLink]="['/product/create']" class="dropdown-item">Thêm mới sản phẩm</a>
               </div>
             </div>
