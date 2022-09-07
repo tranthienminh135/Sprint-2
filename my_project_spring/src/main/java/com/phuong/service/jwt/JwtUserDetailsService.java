@@ -46,7 +46,6 @@ public class JwtUserDetailsService implements UserDetailsService {
             }
         }
 
-        return new User(appUser.getUserName(), //
-                appUser.getPassword(), grantList);
+        return new User(appUser.getUserName(), appUser.getPassword(), grantList);
     }
 }

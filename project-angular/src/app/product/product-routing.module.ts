@@ -5,9 +5,15 @@ import {AdminGuard} from '../user/auth/admin.guard';
 import {Page404Component} from '../error/page404/page404.component';
 import {ProductCreateComponent} from './product-create/product-create.component';
 import {ProductDetailComponent} from './product-detail/product-detail.component';
+import {ProductCartComponent} from './product-cart/product-cart.component';
+import {ProductEditComponent} from './product-edit/product-edit.component';
 
 
 const routes: Routes = [
+  {
+    path: 'product/list/:id',
+    component: ProductListComponent
+  },
   {
     path: 'product/list',
     component: ProductListComponent
@@ -20,6 +26,15 @@ const routes: Routes = [
     path: 'product/create',
     component: ProductCreateComponent,
     canActivate: [AdminGuard]
+  },
+  {
+    path: 'product/edit/:id',
+    component: ProductEditComponent,
+    canActivate: [AdminGuard]
+  },
+  {
+    path: 'product/cart',
+    component: ProductCartComponent
   },
   {
     path: '**',

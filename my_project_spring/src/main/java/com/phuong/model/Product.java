@@ -1,6 +1,7 @@
 package com.phuong.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import org.hibernate.Hibernate;
 
@@ -12,6 +13,7 @@ import java.util.Objects;
 @Entity
 @Getter
 @Setter
+@ToString
 @RequiredArgsConstructor
 public class Product {
     @Id
@@ -48,7 +50,6 @@ public class Product {
     private Boolean isDeleted;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
 

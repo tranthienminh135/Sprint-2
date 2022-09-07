@@ -1,15 +1,15 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {formatDate} from '@angular/common';
 import {finalize} from 'rxjs/operators';
 import {AngularFireStorage} from '@angular/fire/storage';
-import {Product} from '../../model/Product';
-import {ProductService} from '../../service/product.service';
+import {Product} from '../model/product';
+import {ProductService} from '../service/product.service';
 import {ToastrService} from 'ngx-toastr';
 import {Router} from '@angular/router';
-import {Category} from '../../model/category';
-import {CategoryService} from '../../service/category.service';
+import {Category} from '../model/category';
+import {CategoryService} from '../service/category.service';
 
 declare var $: any;
 
@@ -18,22 +18,24 @@ declare var $: any;
   templateUrl: './product-create.component.html',
   styleUrls: ['./product-create.component.css']
 })
-export class ProductCreateComponent implements OnInit {
+export class ProductCreateComponent implements OnInit, OnDestroy {
 
   selectedImage: any;
   public Editor = ClassicEditor;
-  productForm: FormGroup;
+  productCreateForm: FormGroup;
   product: Product;
   categories: Category[] = [];
+  public imgSrc: any = "../../../assets/img/loading.gif";
 
   constructor(@Inject(AngularFireStorage) private storage: AngularFireStorage,
               private productService: ProductService,
               private toastrService: ToastrService,
               private router: Router,
-              private categoryService: CategoryService) { }
+              private categoryService: CategoryService) {
+  }
 
   ngOnInit(): void {
-    this.categoryService.getAllCategories().subscribe(value => {
+    this.categoryService.getAllCategoriesList().subscribe(value => {
       this.categories = value;
     }, error => {}, () => {
       this.createForm();
@@ -41,7 +43,7 @@ export class ProductCreateComponent implements OnInit {
   }
 
   createForm() {
-    this.productForm = new FormGroup({
+    this.productCreateForm = new FormGroup({
       name: new FormControl('', [Validators.required]),
       manufactureTime: new FormControl('', [Validators.required]),
       origin: new FormControl('', [Validators.required]),
@@ -57,8 +59,8 @@ export class ProductCreateComponent implements OnInit {
   }
 
   onCreateProduct() {
-    if (this.productForm.valid) {
-      this.product = this.productForm.value;
+    if (this.productCreateForm.valid) {
+      this.product = this.productCreateForm.value;
       const nameImg = ProductCreateComponent.getCurrentDateTime() + this.selectedImage.name;
       const fileRef = this.storage.ref(nameImg);
       this.storage.upload(nameImg, this.selectedImage).snapshotChanges().pipe(
@@ -66,7 +68,9 @@ export class ProductCreateComponent implements OnInit {
           fileRef.getDownloadURL().subscribe((url) => {
             this.product.image = url;
             this.productService.createNewProduct(this.product).subscribe(value => {
-              this.toastrService.success("Thêm mới thành công!")
+              this.router.navigateByUrl('/product/list').then(() => {
+                this.toastrService.success("Thêm mới thành công!");
+              })
             });
           });
         })
@@ -86,7 +90,15 @@ export class ProductCreateComponent implements OnInit {
   }
 
   showPreview(event: any) {
-    this.selectedImage = event.target.files[0];
+    if (event.target.files && event.target.files[0]) {
+      const reader = new FileReader();
+      reader.onload = (o: any) => this.imgSrc = o.target.result;
+      reader.readAsDataURL(event.target.files[0]);
+      this.selectedImage = event.target.files[0];
+    } else {
+      this.imgSrc = '';
+      this.selectedImage = null;
+    }
   }
   private static getCurrentDateTime(): string {
     return formatDate(new Date(), 'dd-MM-yyyyhhmmssa', 'en-US');
@@ -94,7 +106,7 @@ export class ProductCreateComponent implements OnInit {
 
   checkErrorName() {
     let dataToggle = $('[data-toggle="name"]');
-    if (this.productForm.controls.name.hasError('required')) {
+    if (this.productCreateForm.controls.name.hasError('required')) {
       dataToggle.attr('data-content', 'Tên sản phẩm không được để trống.');
       setTimeout(()=>{
         dataToggle.popover('hide');
@@ -107,7 +119,7 @@ export class ProductCreateComponent implements OnInit {
 
   checkErrorPrice() {
     let dataToggle = $('[data-toggle="price"]');
-    if (this.productForm.controls.price.hasError('required')) {
+    if (this.productCreateForm.controls.price.hasError('required')) {
       dataToggle.attr('data-content', 'Giá sản phẩm không được để trống.');
       setTimeout(()=>{
         dataToggle.popover('hide');
@@ -120,7 +132,7 @@ export class ProductCreateComponent implements OnInit {
 
   checkErrorOrigin() {
     let dataToggle = $('[data-toggle="origin"]');
-    if (this.productForm.controls.origin.hasError('required')) {
+    if (this.productCreateForm.controls.origin.hasError('required')) {
       dataToggle.attr('data-content', 'Xuất xứ sản phẩm không được để trống.');
       setTimeout(()=>{
         dataToggle.popover('hide');
@@ -133,7 +145,7 @@ export class ProductCreateComponent implements OnInit {
 
   checkErrorQuantity() {
     let dataToggle = $('[data-toggle="quantity"]');
-    if (this.productForm.controls.quantity.hasError('required')) {
+    if (this.productCreateForm.controls.quantity.hasError('required')) {
       dataToggle.attr('data-content', 'Số lượng sản phẩm không được để trống.');
       setTimeout(()=>{
         dataToggle.popover('hide');
@@ -146,7 +158,7 @@ export class ProductCreateComponent implements OnInit {
 
   checkErrorManufactureTime() {
     let dataToggle = $('[data-toggle="releaseTime"]');
-    if (this.productForm.controls.releaseTime.hasError('required')) {
+    if (this.productCreateForm.controls.manufactureTime.hasError('required')) {
       dataToggle.attr('data-content', 'Ngày sản xuất sản phẩm không được để trống.');
       setTimeout(()=>{
         dataToggle.popover('hide');
@@ -159,7 +171,7 @@ export class ProductCreateComponent implements OnInit {
 
   checkErrorCategory() {
     let dataToggle = $('[data-toggle="category"]');
-    if (this.productForm.controls.category.hasError('required')) {
+    if (this.productCreateForm.controls.category.hasError('required')) {
       dataToggle.attr('data-content', 'Vui lòng chọn danh mục.');
       setTimeout(()=>{
         dataToggle.popover('hide');
@@ -176,7 +188,7 @@ export class ProductCreateComponent implements OnInit {
       $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
     });
     let dataToggle = $('[data-toggle="image"]');
-    if (this.productForm.controls.image.hasError('required')) {
+    if (this.productCreateForm.controls.image.hasError('required')) {
       dataToggle.attr('data-content', 'Ảnh sản phẩm không được để trống.');
       setTimeout(()=>{
         dataToggle.popover('hide');
@@ -189,7 +201,7 @@ export class ProductCreateComponent implements OnInit {
 
   checkErrorWarrantyPeriod() {
     let dataToggle = $('[data-toggle="warrantyPeriod"]');
-    if (this.productForm.controls.warrantyPeriod.hasError('required')) {
+    if (this.productCreateForm.controls.warrantyPeriod.hasError('required')) {
       dataToggle.attr('data-content', 'Thời hạn bảo hành không được để trống.');
       setTimeout(()=>{
         dataToggle.popover('hide');
@@ -202,7 +214,7 @@ export class ProductCreateComponent implements OnInit {
 
   checkErrorDescription() {
     let dataToggle = $('[data-toggle="description"]');
-    if (this.productForm.controls.description.hasError('required')) {
+    if (this.productCreateForm.controls.description.hasError('required')) {
       dataToggle.attr('data-content', 'Mô tả sản phẩm không được để trống.');
       setTimeout(()=>{
         dataToggle.popover('hide');
@@ -215,7 +227,7 @@ export class ProductCreateComponent implements OnInit {
 
   checkErrorSpecifications() {
     let dataToggle = $('[data-toggle="specifications"]');
-    if (this.productForm.controls.specifications.hasError('required')) {
+    if (this.productCreateForm.controls.specifications.hasError('required')) {
       dataToggle.attr('data-content', 'Thông số kỹ thuật không được để trống.');
       setTimeout(()=>{
         dataToggle.popover('hide');
@@ -224,5 +236,7 @@ export class ProductCreateComponent implements OnInit {
     } else {
       dataToggle.popover('hide');
     }
+  }
+  ngOnDestroy(): void {
   }
 }

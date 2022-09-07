@@ -30,12 +30,17 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Page<Product> findAll(Pageable pageable) {
-        return this.productRepository.findAll(pageable);
+    public Page<Product> findAll(Pageable pageable, String id) {
+        return this.productRepository.findAll(pageable, "%" + id + "%");
     }
 
     @Override
     public Product findById(String id) {
        return this.productRepository.findById(Integer.valueOf(id)).orElse(null);
+    }
+
+    @Override
+    public List<Product> findByCategoryId(Integer id) {
+        return this.productRepository.findByCategoryId(id);
     }
 }

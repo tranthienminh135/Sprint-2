@@ -29,12 +29,16 @@ public class AppUser {
     private String password;
 
     @Column(columnDefinition = "bit(1) default 0")
+    private Boolean status;
+
+    @Column(columnDefinition = "bit(1) default 0")
     private Boolean isDeleted;
 
     @JsonIgnore
     @OneToMany(mappedBy = "appUser")
     private List<UserRole> userRoles;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "appUser")
     private Customer customer;
 

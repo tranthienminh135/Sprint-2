@@ -7,10 +7,12 @@ import {ProductListComponent} from './product-list/product-list.component';
 import {ProductCreateComponent} from './product-create/product-create.component';
 import {CKEditorModule} from '@ckeditor/ckeditor5-angular';
 import { ProductDetailComponent } from './product-detail/product-detail.component';
+import { ProductCartComponent } from './product-cart/product-cart.component';
+import { ProductEditComponent } from './product-edit/product-edit.component';
 
 
 @NgModule({
-  declarations: [ProductListComponent, ProductCreateComponent, ProductDetailComponent],
+  declarations: [ProductListComponent, ProductCreateComponent, ProductDetailComponent, ProductCartComponent, ProductEditComponent],
     imports: [
         CommonModule,
         ProductRoutingModule,

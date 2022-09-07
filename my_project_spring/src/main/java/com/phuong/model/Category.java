@@ -1,5 +1,6 @@
 package com.phuong.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.Hibernate;
@@ -28,8 +29,12 @@ public class Category {
     @Column(columnDefinition = "bit(1) default 0")
     private Boolean isDeleted;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "category")
     private List<Product> productList;
+
+    @Transient
+    private Integer totalProduct;
 
     @Override
     public boolean equals(Object o) {

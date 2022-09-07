@@ -5,6 +5,7 @@ import {ToastrService} from 'ngx-toastr';
 import {Router} from '@angular/router';
 import {AuthService} from '../../user/service/auth.service';
 import {CommonService} from '../../user/service/common.service';
+import {CustomerService} from '../../user/service/customer.service';
 
 @Component({
   selector: 'app-header',
@@ -18,36 +19,73 @@ export class HeaderComponent implements OnInit {
   messageReceived: any;
   private subscriptionName: Subscription;
   public buttonLogoutStatus: boolean = true;
+  public infoStatus: boolean = true;
 
   constructor(private logoutService: LogoutService,
               private toastrService: ToastrService,
               private router: Router,
               private authService: AuthService,
-              private commonService: CommonService) {
+              private commonService: CommonService,
+              private userService: CustomerService) {
     this.authService.checkLogin().subscribe(value => {
       this.loginStatus = value;
-      this.role = this.readLocalStorage('role');
-      this.username = this.readLocalStorage('username');
+      if (value) {
+        this.authService.getRoles().subscribe(resp => {
+          this.getRole(resp);
+        }, error => {
+        });
+      }
     }, error => {
-      localStorage.clear();
     });
     this.subscriptionName = this.commonService.getUpdate().subscribe(message => {
       this.messageReceived = message;
-      this.role = this.readLocalStorage('role');
-      this.username = this.readLocalStorage('username');
       this.authService.checkLogin().subscribe(value => {
         this.loginStatus = value;
+        if (value) {
+          this.authService.getRoles().subscribe(resp => {
+            this.getRole(resp);
+            this.getCustomerByUsername(resp.username);
+          }, error => {
+          });
+        }
       }, error => {
-        localStorage.clear();
       });
     });
   }
 
-  ngOnInit(): void {
+  getRole(value: any) {
+    if (this.isAdmin(value.grantList)) {
+      this.role = 'ROLE_ADMIN';
+    } else if (this.isUser(value.grantList)) {
+      this.role = 'ROLE_USER';
+    }
+    this.username = value.username;
   }
 
-  readLocalStorage(key: string): string {
-    return localStorage.getItem(key);
+  getCustomerByUsername(username: string) {
+    this.userService.getCustomerByUsername(username).subscribe(value => {
+      if (value == null) {
+        this.infoStatus = false;
+      } else {
+        this.infoStatus = value.appUser.status;
+      }
+      console.log(this.infoStatus);
+    });
+  }
+
+  isAdmin(grantList: string[]): boolean {
+    return grantList.some(value => {
+      return value === 'ROLE_ADMIN';
+    });
+  }
+
+  isUser(grantList: string[]): boolean {
+    return grantList.some(value => {
+      return value === 'ROLE_USER';
+    });
+  }
+
+  ngOnInit(): void {
   }
 
   onLogout() {
@@ -58,7 +96,7 @@ export class HeaderComponent implements OnInit {
           this.toastrService.success("Đăng xuất thành công!")
           this.buttonLogoutStatus = true;
         })
-        localStorage.clear();
+        this.infoStatus = true;
         this.sendMessage();
       }, 2000)
     }, error => {
@@ -67,7 +105,7 @@ export class HeaderComponent implements OnInit {
           this.toastrService.warning("Có vẻ như bạn đã hết phiên đăng nhập. Vui lòng đăng nhập lại!")
           this.buttonLogoutStatus = true;
         })
-        localStorage.clear();
+        this.infoStatus = true;
         this.sendMessage();
       }, 2000)
 

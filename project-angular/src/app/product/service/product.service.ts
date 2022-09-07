@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {Product} from '../model/Product';
-import {environment} from '../../environments/environment';
+import {Product} from '../model/product';
+import {environment} from '../../../environments/environment';
 
 const API_URL = `${environment.apiUrl}`
 
@@ -21,11 +21,15 @@ export class ProductService {
     return this.httpClient.post<Product>(API_URL + "/product/create", product);
   }
 
-  getAllPageProducts(pageNumber: number): Observable<Product[]> {
-    return this.httpClient.get<Product[]>(API_URL + "/product/page?page=" + pageNumber);
+  getAllPageProducts(pageNumber: number, categoryId: string): Observable<Product[]> {
+    return this.httpClient.get<Product[]>(API_URL + "/product/page?page=" + pageNumber + "&categoryId=" + categoryId);
   }
 
   findProductById(id: string): Observable<Product> {
     return this.httpClient.get<Product>(API_URL + '/product/detail/' + id);
+  }
+
+  updateProduct(value: Product): Observable<Product> {
+    return this.httpClient.post<Product>(API_URL + "/product/edit", value)
   }
 }

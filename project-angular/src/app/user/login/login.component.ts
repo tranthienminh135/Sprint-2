@@ -75,7 +75,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     const account = this.loginForm.value;
     if (this.loginForm.valid && this.activeLogin) {
       this.loginService.goLogin(account).subscribe(value => {
-        this.authService.isLogin(value);
         setTimeout(()=>{
           this.router.navigateByUrl('/home').then(() => {
             this.toastrService.success('Đăng nhập thành công!');
