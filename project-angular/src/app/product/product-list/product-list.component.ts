@@ -7,6 +7,10 @@ import {Category} from '../model/category';
 import {CategoryService} from '../service/category.service';
 import {AuthService} from '../../user/service/auth.service';
 import {ProductOrder} from '../model/productOrder';
+import {Customer} from '../../user/model/customer';
+import {CustomerService} from '../../user/service/customer.service';
+import {CartService} from '../../user/service/cart.service';
+import {CommonService} from '../../user/service/common.service';
 
 declare var $: any;
 
@@ -21,22 +25,29 @@ export class ProductListComponent implements OnInit, OnDestroy {
   public role: string;
   public username: string = '';
   public loginStatus: any;
-  productOrders: ProductOrder[] = [];
+  public totalProducts: number;
+  customer: Customer;
+  public infoStatus: boolean = true;
 
   constructor(private productService: ProductService,
               private categoryService: CategoryService,
               private router: Router,
               private authService: AuthService,
               private toastrService: ToastrService,
-              private activatedRoute: ActivatedRoute) {
+              private activatedRoute: ActivatedRoute,
+              private customerService: CustomerService,
+              private cartService: CartService,
+              private commonService: CommonService) {
     $('#product-list').attr('class', 'nav-item nav-link active');
     this.authService.checkLogin().subscribe(value => {
       this.loginStatus = value;
       if (value) {
         this.authService.getRoles().subscribe(resp => {
+          this.getCustomerByUsername(resp.username);
           this.getRole(resp);
-        }, error => {
-        });
+        }, error => {});
+      } else {
+
       }
     }, error => {
     });
@@ -93,6 +104,10 @@ export class ProductListComponent implements OnInit, OnDestroy {
         this.products = [];
       }
     });
+    this.productService.getAllListProducts().subscribe(value => {
+      // @ts-ignore
+      this.totalProducts = value.length;
+    });
   }
 
   ngOnDestroy(): void {
@@ -106,8 +121,43 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   addToCart(product: Product) {
-    if (this.loginStatus) {
+    let productOrder: ProductOrder = {
+      customer: this.customer,
+      product: product,
+      quantity: 1
+    };
+    this.cartService.addOrder(productOrder).subscribe((po: ProductOrder) => {
+      this.toastrService.success("Thêm thành công sản phẩm " + po.product.name);
+      this.sendMessage();
+    }, error => {
+      if (error.error.message == 'quantity') {
+        this.toastrService.warning("Bạn đã thêm vượt quá số lượng sản phẩm!");
+      }
+    });
+  }
 
-    }
+  getCustomerByUsername(username: string) {
+    this.customerService.getCustomerByUsername(username).subscribe(value => {
+      this.customer = value;
+      if (value == null) {
+        this.infoStatus = false;
+      } else {
+        this.infoStatus = value.appUser.status;
+      }
+    });
+  }
+
+  sendMessage(): void {
+    this.commonService.sendUpdate('Success!');
+  }
+
+  addToCartMessage() {
+    this.toastrService.warning("Vui lòng đăng nhập để thực hiện chức năng này!");
+  }
+
+  updateInfoMessage() {
+    this.router.navigateByUrl("/checkout").then(value => {
+      this.toastrService.warning("Vui lòng cập nhật thông tin!");
+    })
   }
 }

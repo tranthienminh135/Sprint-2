@@ -1,5 +1,6 @@
 package com.phuong.model.account;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.phuong.model.Customer;
 import lombok.Getter;
@@ -25,6 +26,7 @@ public class AppUser {
     @Column(unique = true, nullable = false)
     private String userName;
 
+    @JsonBackReference
     @Column(nullable = false)
     private String password;
 

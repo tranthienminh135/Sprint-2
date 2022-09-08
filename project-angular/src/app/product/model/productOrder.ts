@@ -5,5 +5,6 @@ export interface ProductOrder {
   id?: number;
   quantity?: number;
   product?: Product;
-  customer?: Customer
+  customer?: Customer,
+  totalMoney?: number
 }

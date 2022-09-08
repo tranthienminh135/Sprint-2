@@ -1,17 +1,16 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 
-import { UserRoutingModule } from './user-routing.module';
-import { LoginComponent } from './login/login.component';
-import { RegisterComponent } from './register/register.component';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {HttpClientModule} from '@angular/common/http';
+import {UserRoutingModule} from './user-routing.module';
+import {LoginComponent} from './login/login.component';
+import {RegisterComponent} from './register/register.component';
 import {ShareModule} from '../share/share.module';
-import { InfoComponent } from './info/info.component';
+import {InfoComponent} from './info/info.component';
+import {CheckoutComponent} from './checkout/checkout.component';
 
 
 @NgModule({
-  declarations: [LoginComponent, RegisterComponent, InfoComponent],
+  declarations: [LoginComponent, RegisterComponent, InfoComponent, CheckoutComponent],
   imports: [
     CommonModule,
     UserRoutingModule,

@@ -64,23 +64,41 @@
       <div class="d-flex align-items-center mb-4 pt-2">
         <div class="input-group quantity mr-3" style="width: 130px;" *ngIf="role != 'ROLE_ADMIN'">
           <div class="input-group-btn">
-            <button class="btn btn-primary btn-minus">
+            <button class="btn btn-primary btn-minus" (click)="minusQuantity()">
               <i class="fa fa-minus"></i>
             </button>
           </div>
-          <input type="text" class="form-control bg-secondary text-center" value="1">
+          <input type="text" class="form-control bg-secondary text-center" [value]="choiceQuantity">
           <div class="input-group-btn">
-            <button class="btn btn-primary btn-plus">
+            <button class="btn btn-primary btn-plus" (click)="plusQuantity(product)">
               <i class="fa fa-plus"></i>
             </button>
           </div>
         </div >
-        <button class="btn btn-outline-primary px-3" *ngIf="role != 'ROLE_ADMIN'"><i class="fa fa-shopping-cart mr-1"></i>Thêm
-          vào giỏ hàng
+        <button class="btn btn-outline-primary px-3"
+                *ngIf="role != 'ROLE_ADMIN' && maximumQuantity > 0 && loginStatus == true && infoStatus == true" (click)="addToCart(product)">
+          <i class="fa fa-shopping-cart mr-1"></i>
+          Thêm vào giỏ hàng
+        </button>
+        <button class="btn btn-outline-primary px-3"
+                *ngIf="role != 'ROLE_ADMIN' && maximumQuantity <= 0 && loginStatus == true && infoStatus == true" (click)="maximumProductInCart()">
+          <i class="fa fa-shopping-cart mr-1"></i>
+          Thêm vào giỏ hàng
+        </button>
+        <button class="btn btn-outline-primary px-3"
+                *ngIf="role != 'ROLE_ADMIN' && maximumQuantity > 0 && loginStatus == true && infoStatus == false" (click)="updateInfoMessage()">
+          <i class="fa fa-shopping-cart mr-1"></i>
+          Thêm vào giỏ hàng
+        </button>
+        <button class="btn btn-outline-primary px-3"
+                *ngIf="role != 'ROLE_ADMIN' && loginStatus == false && infoStatus == true" (click)="addToCartMessage()">
+          <i class="fa fa-shopping-cart mr-1"></i>
+          Thêm vào giỏ hàng
         </button>
         <button [routerLink]="['/product/edit', product.id]" class="btn btn-outline-primary px-3 mr-3"
-                *ngIf="role == 'ROLE_ADMIN' && loginStatus == true"><i
-          class="fas fa-pencil-alt mr-1"></i>Chỉnh sửa
+                *ngIf="role == 'ROLE_ADMIN' && loginStatus == true">
+          <i class="fas fa-pencil-alt mr-1"></i>
+          Chỉnh sửa
         </button>
         <!-- Button trigger modal -->
         <button *ngIf="role == 'ROLE_ADMIN' && loginStatus == true" class="btn btn-outline-primary px-3 mr-3"

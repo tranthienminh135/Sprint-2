@@ -103,7 +103,6 @@ export class ProductEditComponent implements OnInit {
           });
         });
       } else {
-        console.log(this.selectedImage);
         const nameImg = this.getCurrentDateTime() + this.selectedImage.name;
         const fileRef = this.storage.ref(nameImg);
         this.storage.upload(nameImg, this.selectedImage).snapshotChanges().pipe(

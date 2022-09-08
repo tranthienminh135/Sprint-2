@@ -64,6 +64,15 @@ public class ProductRestController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @RequestMapping(value = "/product/list", method = RequestMethod.GET)
+    public ResponseEntity<List<Product>> getAllListProducts() {
+        List<Product> productList = this.productService.findAll();
+        if (productList.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(productList, HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/product/detail/{id}", method = RequestMethod.GET)
     public ResponseEntity<Product> getProductById(@PathVariable String id) {
         Product product = this.productService.findById(id);

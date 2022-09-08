@@ -32,4 +32,8 @@ export class ProductService {
   updateProduct(value: Product): Observable<Product> {
     return this.httpClient.post<Product>(API_URL + "/product/edit", value)
   }
+
+  getAllListProducts(): Observable<Product[]> {
+    return this.httpClient.get<Product[]>(API_URL + '/product/list');
+  }
 }

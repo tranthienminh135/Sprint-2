@@ -3,7 +3,7 @@
   <div class="row bg-secondary py-2 px-xl-5 text-center m-auto">
     <div class="col-lg-12">
       <div class="d-inline-flex align-items-center">
-        <a class="text-danger" [routerLink]="">Có vẻ như bạn chưa cập nhật thông tin. Hãy cập nhật thông tin cá nhân</a>
+        <a class="text-danger" [routerLink]="['/checkout']">Có vẻ như bạn chưa cập nhật thông tin. Hãy cập nhật thông tin cá nhân để nhận được nhiều ưu đãi!</a>
       </div>
     </div>
   </div>
@@ -41,23 +41,37 @@
               </div>
             </div>
             <div class="nav-item dropdown" *ngIf="loginStatus == true && buttonLogoutStatus">
-              <a [routerLink]="" class="nav-link dropdown-toggle" data-toggle="dropdown" id="user-info">Hello {{username}}</a>
+              <a [routerLink]="" class="nav-link dropdown-toggle" data-toggle="dropdown" id="user-info" *ngIf="name == ''">
+                Hello {{username}}
+              </a>
+              <a [routerLink]="" class="nav-link dropdown-toggle" data-toggle="dropdown" id="user-info1" *ngIf="name != ''">
+                Hello {{name}}
+              </a>
               <div class="dropdown-menu rounded-0 m-0">
                 <a [routerLink]="" class="dropdown-item" (click)="onLogout()" *ngIf="loginStatus == true && buttonLogoutStatus">Đăng xuất</a>
                 <a [routerLink]="['/info']" class="dropdown-item" id="info">Thông tin cá nhân</a>
               </div>
             </div>
+
             <div class="nav-item dropdown" *ngIf="loginStatus == true && !buttonLogoutStatus">
-              <a [routerLink]="" class="nav-link dropdown-toggle" data-toggle="dropdown">
+              <a [routerLink]="" class="nav-link dropdown-toggle" data-toggle="dropdown" *ngIf="name == ''">
                 <div class="spinner-border spinner-border-sm mb-1"></div>
                 Hello {{username}}
+              </a>
+              <a [routerLink]="" class="nav-link dropdown-toggle" data-toggle="dropdown" *ngIf="name != ''">
+                <div class="spinner-border spinner-border-sm mb-1"></div>
+                Hello {{name}}
               </a>
             </div>
             <a [routerLink]="['/login']" class="nav-item nav-link" *ngIf="loginStatus == false">Đăng nhập</a>
             <a [routerLink]="['/register']" class="nav-item nav-link" *ngIf="loginStatus == false">Đăng ký</a>
             <a [routerLink]="['/product/cart']" class="nav-item nav-link" *ngIf="role != 'ROLE_ADMIN'">
               <i class="fas fa-shopping-cart text-primary"></i>
-              <span class="badge">0</span>
+              <span class="badge">{{totalProductInCart}}</span>
+            </a>
+            <a [routerLink]="['/info']" class="mt-2">
+              <img *ngIf="loginStatus == true" [src]="avatar"
+                   width="50px" height="50px" class="rounded-circle m-auto" alt="Cinque Terre">
             </a>
           </div>
         </div>

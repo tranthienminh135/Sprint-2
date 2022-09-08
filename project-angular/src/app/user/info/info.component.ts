@@ -23,7 +23,9 @@ export class InfoComponent implements OnInit, OnDestroy {
   constructor(private activatedRoute: ActivatedRoute,
               private productService: ProductService,
               private authService: AuthService,
-              private userService: CustomerService) {
+              private customerService: CustomerService,
+              private router: Router,
+              private toastrService: ToastrService) {
     this.authService.checkLogin().subscribe(value => {
       this.loginStatus = value;
       if (value) {
@@ -64,8 +66,13 @@ export class InfoComponent implements OnInit, OnDestroy {
   }
 
   getCustomerByUsername(username: string) {
-    this.userService.getCustomerByUsername(username).subscribe(value => {
+    this.customerService.getCustomerByUsername(username).subscribe(value => {
       this.customer = value;
+      if (value == null) {
+        this.router.navigateByUrl("/checkout").then(() => {
+          this.toastrService.warning("Có vẻ như bạn chưa cập nhật thông tin. Vui lòng cập nhật thông tin!")
+        })
+      }
     });
   }
 }

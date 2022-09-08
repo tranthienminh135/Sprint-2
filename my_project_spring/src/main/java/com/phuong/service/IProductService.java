@@ -16,4 +16,6 @@ public interface IProductService {
     Product findById(String id);
 
     List<Product> findByCategoryId(Integer id);
+
+    List<Product> findAll();
 }

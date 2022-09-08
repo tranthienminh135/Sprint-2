@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -24,5 +25,12 @@ public class UserRestController {
     public ResponseEntity<List<AppUser>> getAllUser() {
         List<AppUser> appUsers = this.appUserRepository.findAll();
         return new ResponseEntity<>(appUsers, HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/get/user/{username}")
+    public ResponseEntity<AppUser> getAppUserFormUsername(@PathVariable String username) {
+        AppUser appUser = this.appUserRepository.getAppUserByUsername(username);
+        return new ResponseEntity<>(appUser, HttpStatus.OK);
     }
 }

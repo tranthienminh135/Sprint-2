@@ -37,6 +37,7 @@ public class Customer {
     private Date birthday;
 
     @OneToMany(mappedBy = "customer")
+    @JsonIgnore
     private List<ProductOrder> productOrderList;
 
     @OneToOne

@@ -41,6 +41,7 @@ public class AppUserService implements IAppUserService {
         appUser.setUserName(registerRequest.getUsername());
         appUser.setPassword(this.encrytedPasswordUtils.encrytePassword(registerRequest.getPassword()));
         appUser.setIsDeleted(false);
+        appUser.setStatus(false);
         AppUser appUserDone = this.IAppUserRepository.save(appUser);
         AppRole appRole = new AppRole();
         appRole.setId(2);
