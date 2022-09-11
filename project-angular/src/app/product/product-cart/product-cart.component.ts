@@ -41,13 +41,17 @@ export class ProductCartComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.sendMessage();
   }
 
   getProductInCardByCustomer(customer: Customer) {
-    let num = 0;
     this.cartService.getProductInCardByCustomer(customer).subscribe((pos: ProductOrder[]) => {
-      this.productOrders = pos;
-      this.caculateTotalMoney(pos);
+      if (pos != null) {
+        this.productOrders = pos;
+        this.caculateTotalMoney(pos);
+      } else {
+        this.productOrders = [];
+      }
     });
   }
 
@@ -87,7 +91,6 @@ export class ProductCartComponent implements OnInit {
       this.caculateTotalMoney(value);
       this.sendMessage();
     }, error => {
-      console.log(error);
       if (error.error.message == 'maximum') {
           this.toastrService.warning("Số lượng sản phẩm đã tối đa.");
       }

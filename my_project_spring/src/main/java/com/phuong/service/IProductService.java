@@ -11,11 +11,13 @@ public interface IProductService {
 
     void save(Product product);
 
-    Page<Product> findAll(Pageable pageable, String id);
+    Page<Product> findAll(Pageable pageable, String id, String productName, String beginPrice, String endPrice, String originName);
 
     Product findById(String id);
 
     List<Product> findByCategoryId(Integer id);
 
     List<Product> findAll();
+
+    Boolean deleteProduct(String id);
 }

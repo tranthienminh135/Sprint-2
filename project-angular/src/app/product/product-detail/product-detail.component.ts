@@ -10,6 +10,8 @@ import {CustomerService} from '../../user/service/customer.service';
 import {CartService} from '../../user/service/cart.service';
 import {CommonService} from '../../user/service/common.service';
 
+declare var $: any;
+
 @Component({
   selector: 'app-product-detail',
   templateUrl: './product-detail.component.html',
@@ -71,6 +73,7 @@ export class ProductDetailComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.sendMessage();
   }
 
   findProductById(id: string) {
@@ -143,5 +146,14 @@ export class ProductDetailComponent implements OnInit {
     this.router.navigateByUrl("/checkout").then(value => {
       this.toastrService.warning("Vui lòng cập nhật thông tin!");
     })
+  }
+
+  deleteProduct(product: Product) {
+    this.productService.deleteProduct(product.id).subscribe(() => {
+      this.router.navigateByUrl("/product/list").then(() => {
+        $('#exampleModalDelete' + product.id).modal('hide');
+        this.toastrService.success("Xóa thành công sản phẩm " + product.name);
+      })
+    });
   }
 }

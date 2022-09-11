@@ -30,13 +30,18 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Page<Product> findAll(Pageable pageable, String id) {
-        return this.productRepository.findAll(pageable, "%" + id + "%");
+    public Page<Product> findAll(Pageable pageable, String id, String productName, String beginPrice, String endPrice, String originName) {
+        Double begin = Double.valueOf(beginPrice);
+        Double end = Double.valueOf(endPrice);
+        if (id.equals("")) {
+            id = "%%";
+        }
+        return this.productRepository.findAll(pageable, id, "%" + productName + "%", begin, end, "%" + originName + "%");
     }
 
     @Override
     public Product findById(String id) {
-       return this.productRepository.findById(Integer.valueOf(id)).orElse(null);
+        return this.productRepository.findById(Integer.valueOf(id)).orElse(null);
     }
 
     @Override
@@ -46,6 +51,18 @@ public class ProductService implements IProductService {
 
     @Override
     public List<Product> findAll() {
-        return this.productRepository.findAll();
+        return this.productRepository.findAllListProduct();
+    }
+
+    @Override
+    public Boolean deleteProduct(String id) {
+        List<Product> productList = this.productRepository.findAll();
+        for (Product product : productList) {
+            if (product.getId().equals(Integer.parseInt(id)) && !product.getIsDeleted()) {
+                this.productRepository.deleteProduct(id);
+                return true;
+            }
+        }
+        return false;
     }
 }

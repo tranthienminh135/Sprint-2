@@ -3,6 +3,7 @@ import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/form
 import {RegisterService} from '../service/register.service';
 import {ToastrService} from 'ngx-toastr';
 import {Router} from '@angular/router';
+import {CommonService} from '../service/common.service';
 
 declare var $: any;
 
@@ -20,7 +21,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   constructor(private registerService: RegisterService,
               private toastrService: ToastrService,
-              private router: Router) {
+              private router: Router,
+              private commonService: CommonService) {
   }
 
   ngOnInit(): void {
@@ -186,5 +188,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
     $('[data-toggle="password"]').popover('hide');
     $('[data-toggle="confirmPassword"]').popover('hide');
     $('[data-toggle="samePassword"]').popover('hide');
+  }
+
+  sendMessage(): void {
+    this.commonService.sendUpdate('Success!');
   }
 }

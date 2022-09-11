@@ -39,18 +39,6 @@ export class HomeComponent implements OnInit, OnDestroy {
               private cartService: CartService,
               private commonService: CommonService,
               private router: Router) {
-    $('#home-page').attr('class', 'nav-item nav-link active');
-    this.authService.checkLogin().subscribe(value => {
-      this.loginStatus = value;
-      if (value) {
-        this.authService.getRoles().subscribe(resp => {
-          this.getRole(resp);
-          this.getCustomerByUsername(resp.username);
-        }, error => {
-        });
-      }
-    }, error => {
-    });
   }
 
   getRole(value: any) {
@@ -75,9 +63,22 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    $('#home-page').attr('class', 'nav-item nav-link active');
+    this.authService.checkLogin().subscribe(value => {
+      this.loginStatus = value;
+      if (value) {
+        this.authService.getRoles().subscribe(resp => {
+          this.getRole(resp);
+          this.getCustomerByUsername(resp.username);
+        }, error => {
+        });
+      }
+    }, error => {
+    });
     this.getAllCategories(3);
     this.getNewProducts();
     this.getCategoriesDiscount();
+    this.sendMessage();
   }
 
   getAllCategories(size: number) {
@@ -155,5 +156,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl("/checkout").then(value => {
       this.toastrService.warning("Vui lòng cập nhật thông tin!");
     })
+  }
+
+  deleteProduct(product: Product) {
+    this.productService.deleteProduct(product.id).subscribe(value => {
+      this.ngOnInit();
+      $('#exampleModalDelete' + product.id).modal('hide');
+      this.toastrService.success("Xóa thành công sản phẩm " + product.name);
+    });
   }
 }

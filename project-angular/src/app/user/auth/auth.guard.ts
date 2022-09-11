@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import {AuthService} from '../service/auth.service';
 import {ToastrService} from 'ngx-toastr';
 import {map} from 'rxjs/operators';
+import {CommonService} from '../service/common.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,8 @@ import {map} from 'rxjs/operators';
 export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService,
               private router: Router,
-              private toastrService: ToastrService) {
+              private toastrService: ToastrService,
+              private commonService: CommonService) {
   }
   canActivate(
     next: ActivatedRouteSnapshot,
@@ -21,11 +23,14 @@ export class AuthGuard implements CanActivate {
         return true;
       } else {
         this.router.navigateByUrl("/401").then(() => {
-          this.toastrService.warning("Vui lòng đăng nhập để thực hiện chức năng này!")
+          this.toastrService.warning("Vui lòng đăng nhập để thực hiện chức năng này!");
+          this.sendMessage();
         });
         return false;
       }
     }))
   }
-
+  sendMessage(): void {
+    this.commonService.sendUpdate('Success!');
+  }
 }

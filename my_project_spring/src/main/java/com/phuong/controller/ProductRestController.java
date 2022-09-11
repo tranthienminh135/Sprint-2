@@ -1,12 +1,15 @@
 package com.phuong.controller;
 
+import com.phuong.dto.ErrorDto;
 import com.phuong.dto.ProductDto;
 import com.phuong.model.Product;
 import com.phuong.service.IProductService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,13 +58,41 @@ public class ProductRestController {
     }
 
     @RequestMapping(value = "/product/page", method = RequestMethod.GET)
-    public ResponseEntity<Page<Product>> getAllPageProducts(@PageableDefault(value = 9) Pageable pageable,
-                                                            @RequestParam("categoryId") String id) {
-        Page<Product> productPage = this.productService.findAll(pageable, id);
+    public ResponseEntity<Page<Product>> getAllPageProducts(
+            @RequestParam(value = "categoryId", required = false, defaultValue = "") String categoryId,
+            @RequestParam(value = "productName", required = false, defaultValue = "") String productName,
+            @RequestParam(value = "beginPrice", required = false, defaultValue = "0") String beginPrice,
+            @RequestParam(value = "endPrice", required = false, defaultValue = "400000000000") String endPrice,
+            @RequestParam(value = "originName", required = false, defaultValue = "") String originName,
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = "9") Integer size,
+            @RequestParam(name = "sort", required = false, defaultValue = "id") String sort) {
+        Sort sortable = getSorts(sort);
+        Pageable pageable = PageRequest.of(page, size, sortable);
+        Page<Product> productPage = this.productService.findAll(pageable, categoryId, productName, beginPrice, endPrice, originName);
         if (productPage.hasContent()) {
             return new ResponseEntity<>(productPage, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    private Sort getSorts(String sort) {
+        Sort sortable;
+        switch (sort) {
+            case "manufacture_time":
+                sortable = Sort.by(Sort.Order.desc(sort));
+                break;
+            case "price,desc":
+                sortable = Sort.by(Sort.Order.desc("price"));
+                break;
+            case "price,asc":
+                sortable = Sort.by(Sort.Order.asc("price"));
+                break;
+            default:
+                sortable = Sort.by(Sort.Order.asc(sort));
+                break;
+        }
+        return sortable;
     }
 
     @RequestMapping(value = "/product/list", method = RequestMethod.GET)
@@ -82,4 +113,15 @@ public class ProductRestController {
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @DeleteMapping("/product/delete/{id}")
+    public ResponseEntity<?> deleteProduct(@PathVariable String id) {
+        Boolean check = this.productService.deleteProduct(id);
+        if (check) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        ErrorDto errorDto = new ErrorDto();
+        errorDto.setMessage("idnotfound");
+        return new ResponseEntity<>(errorDto, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

@@ -1,6 +1,7 @@
 package com.phuong.controller;
 
 import com.phuong.model.Category;
+import com.phuong.model.Product;
 import com.phuong.service.ICategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -36,7 +37,13 @@ public class CategoryRestController {
         Pageable pageable = PageRequest.of(page, size, sortable);
         Page<Category> categoryPage = this.categoryService.findAll(pageable);
         for (Category category: categoryPage.getContent()) {
-            category.setTotalProduct(category.getProductList().size());
+            int totalProduct = 0;
+            for (Product product: category.getProductList()) {
+                if (!product.getIsDeleted()) {
+                    totalProduct++;
+                }
+            }
+            category.setTotalProduct(totalProduct);
         }
         if (categoryPage.hasContent()) {
             return new ResponseEntity<>(categoryPage, HttpStatus.OK);
@@ -48,7 +55,13 @@ public class CategoryRestController {
     public ResponseEntity<List<Category>> getAllCategory() {
         List<Category> categoryList = this.categoryService.findAll();
         for (Category category: categoryList) {
-            category.setTotalProduct(category.getProductList().size());
+            int totalProduct = 0;
+            for (Product product: category.getProductList()) {
+                if (!product.getIsDeleted()) {
+                    totalProduct++;
+                }
+            }
+            category.setTotalProduct(totalProduct);
         }
         if (categoryList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

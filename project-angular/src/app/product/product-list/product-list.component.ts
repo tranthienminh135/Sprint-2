@@ -11,6 +11,8 @@ import {Customer} from '../../user/model/customer';
 import {CustomerService} from '../../user/service/customer.service';
 import {CartService} from '../../user/service/cart.service';
 import {CommonService} from '../../user/service/common.service';
+import {FormControl, FormGroup} from '@angular/forms';
+import {OriginDto} from '../model/originDto';
 
 declare var $: any;
 
@@ -28,6 +30,20 @@ export class ProductListComponent implements OnInit, OnDestroy {
   public totalProducts: number;
   customer: Customer;
   public infoStatus: boolean = true;
+  searchByNameForm: FormGroup;
+  categoryId: string = '';
+  beginPrice: string = '0';
+  endPrice: string = '400000000000';
+  originDtos: OriginDto[] = [];
+  public totalProductsFilter: number;
+  public originName = '';
+  public productName = '';
+  public totalOneMi: number = 0;
+  public totalThreeMi: number = 0;
+  public totalFiveMi: number = 0;
+  public totalTenMi: number = 0;
+  public totalLetThanTenMi: number = 0;
+  sort: string = 'id';
 
   constructor(private productService: ProductService,
               private categoryService: CategoryService,
@@ -38,19 +54,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
               private customerService: CustomerService,
               private cartService: CartService,
               private commonService: CommonService) {
-    $('#product-list').attr('class', 'nav-item nav-link active');
-    this.authService.checkLogin().subscribe(value => {
-      this.loginStatus = value;
-      if (value) {
-        this.authService.getRoles().subscribe(resp => {
-          this.getCustomerByUsername(resp.username);
-          this.getRole(resp);
-        }, error => {});
-      } else {
-
-      }
-    }, error => {
-    });
   }
 
   getRole(value: any) {
@@ -75,6 +78,21 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    $('#product-list').attr('class', 'nav-item nav-link active');
+    this.authService.checkLogin().subscribe(value => {
+      this.loginStatus = value;
+      if (value) {
+        this.authService.getRoles().subscribe(resp => {
+          this.getCustomerByUsername(resp.username);
+          this.getRole(resp);
+        }, error => {
+        });
+      } else {
+
+      }
+    }, error => {
+    });
+    this.createSearchByNameForm();
     this.getAllCategories();
     this.activatedRoute.paramMap.subscribe(value => {
       if (value.get('id') != null) {
@@ -83,6 +101,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
         this.loadProductByCategory('');
       }
     });
+    this.sendMessage();
   }
 
   getAllCategories() {
@@ -92,21 +111,47 @@ export class ProductListComponent implements OnInit, OnDestroy {
     });
   }
 
-  getAllProductPage(pageNumber: number, categoryId: string) {
-    this.productService.getAllPageProducts(pageNumber, categoryId).subscribe(value => {
+  getAllProductPage(pageNumber: number, categoryId: string, productName: string, beginPrice: string, endPrice: string, originName: string, sort: string) {
+    this.productService.getAllPageProducts(pageNumber, categoryId, productName, beginPrice, endPrice, originName, sort).subscribe((value: any) => {
       if (value != null) {
-        // @ts-ignore
         if (value.totalElements >= 0) {
-          // @ts-ignore
           this.products = value.content;
+          this.totalProductsFilter = value.content.length;
+          if (originName == '') {
+            this.originDtos = [];
+          }
+          for (let i = 0; i < value.content.length; i++) {
+            let o = {
+              name: value.content[i].origin,
+              quantity: 1
+            };
+            this.originDtos.push(o);
+          }
+          for (let i = 0; i < this.originDtos.length; i++) {
+            for (let j = i + 1; j < this.originDtos.length; j++) {
+              if (this.originDtos[i].name == this.originDtos[j].name) {
+                if (this.originDtos[i].name != originName) {
+                  this.originDtos[i].quantity = this.originDtos[i].quantity + 1;
+                }
+                this.originDtos.splice(j, 1);
+                j--;
+              }
+            }
+          }
         }
       } else {
         this.products = [];
       }
     });
     this.productService.getAllListProducts().subscribe(value => {
-      // @ts-ignore
-      this.totalProducts = value.length;
+      if (value != null) {
+        this.totalProducts = value.length;
+        if (this.totalProductsFilter == undefined) {
+          this.totalProductsFilter = value.length;
+        }
+      } else {
+        this.totalProducts = 0;
+      }
     });
   }
 
@@ -115,9 +160,11 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   loadProductByCategory(id: string) {
+    this.categoryId = id;
+    this.searchByName();
     $('[data-toggle="reset-active-category"]').attr('class', 'nav-item nav-link');
     $('#category' + id).attr('class', 'nav-item nav-link active');
-    this.getAllProductPage(0, String(id));
+    this.getTotalFilterPrice(id);
   }
 
   addToCart(product: Product) {
@@ -127,11 +174,11 @@ export class ProductListComponent implements OnInit, OnDestroy {
       quantity: 1
     };
     this.cartService.addOrder(productOrder).subscribe((po: ProductOrder) => {
-      this.toastrService.success("Thêm thành công sản phẩm " + po.product.name);
+      this.toastrService.success('Thêm thành công sản phẩm ' + po.product.name);
       this.sendMessage();
     }, error => {
       if (error.error.message == 'quantity') {
-        this.toastrService.warning("Bạn đã thêm vượt quá số lượng sản phẩm!");
+        this.toastrService.warning('Bạn đã thêm vượt quá số lượng sản phẩm!');
       }
     });
   }
@@ -152,12 +199,109 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   addToCartMessage() {
-    this.toastrService.warning("Vui lòng đăng nhập để thực hiện chức năng này!");
+    this.toastrService.warning('Vui lòng đăng nhập để thực hiện chức năng này!');
   }
 
   updateInfoMessage() {
-    this.router.navigateByUrl("/checkout").then(value => {
-      this.toastrService.warning("Vui lòng cập nhật thông tin!");
-    })
+    this.router.navigateByUrl('/checkout').then(value => {
+      this.toastrService.warning('Vui lòng cập nhật thông tin!');
+    });
+  }
+
+  createSearchByNameForm() {
+    this.searchByNameForm = new FormGroup({
+      productName: new FormControl()
+    });
+  }
+
+  searchByName() {
+    let productName;
+    if (this.searchByNameForm.value.productName != null) {
+      productName = this.searchByNameForm.value.productName;
+    } else {
+      productName = '';
+    }
+    this.productName = productName;
+    this.getAllProductPage(0, this.categoryId, productName, this.beginPrice, this.endPrice, this.originName, this.sort);
+  }
+
+  resetSearchForm() {
+    this.searchByNameForm.reset();
+    this.getAllProductPage(0, this.categoryId, this.productName, this.beginPrice, this.endPrice, this.originName, this.sort);
+  }
+
+  closeModal(id: number) {
+    $('#exampleModalDelete' + id).modal('hide');
+  }
+
+
+  deleteProduct(product: Product) {
+    this.productService.deleteProduct(product.id).subscribe(value => {
+      this.ngOnInit();
+      $('#exampleModalDelete' + product.id).modal('hide');
+      this.toastrService.success('Xóa thành công sản phẩm ' + product.name);
+    });
+  }
+
+  filterPrice(begin: string, end: string) {
+    this.beginPrice = begin;
+    this.endPrice = end;
+    this.getAllProductPage(0, this.categoryId, this.productName, begin, end, this.originName, this.sort);
+  }
+
+  filterOrigin(originName: string) {
+    this.originName = originName;
+    this.getAllProductPage(0, this.categoryId, this.productName, this.beginPrice, this.endPrice, originName, this.sort);
+  }
+
+  getTotalFilterPrice(categoryId: string) {
+    this.productService.getAllPageProducts(0, categoryId, '', '0', '1000000', '', this.sort).subscribe((value: any) => {
+      if (value != null) {
+        this.totalOneMi = value.content.length;
+      } else {
+        this.totalOneMi = 0;
+      }
+    });
+    this.productService.getAllPageProducts(0, categoryId, '', '1000001', '3000000', '', this.sort).subscribe((value: any) => {
+      if (value != null) {
+        this.totalThreeMi = value.content.length;
+      } else {
+        this.totalThreeMi = 0;
+      }
+    });
+    this.productService.getAllPageProducts(0, categoryId, '', '3000001', '5000000', '', this.sort).subscribe((value: any) => {
+      if (value != null) {
+        this.totalFiveMi = value.content.length;
+      } else {
+        this.totalFiveMi = 0;
+      }
+    });
+    this.productService.getAllPageProducts(0, categoryId, '', '5000001', '10000000', '', this.sort).subscribe((value: any) => {
+      if (value != null) {
+        this.totalTenMi = value.content.length;
+      } else {
+        this.totalTenMi = 0;
+      }
+    });
+
+    this.productService.getAllPageProducts(0, categoryId, '', '10000000', '400000000000', '', this.sort).subscribe((value: any) => {
+      if (value != null) {
+        this.totalLetThanTenMi = value.content.length;
+      } else {
+        this.totalLetThanTenMi = 0;
+      }
+    });
+  }
+
+  sortByDate(sortValue: string) {
+    this.getAllProductPage(0, this.categoryId, this.productName, this.beginPrice, this.endPrice, this.originName, sortValue);
+  }
+
+  sortByPriceDESC(sortValue: string) {
+    this.getAllProductPage(0, this.categoryId, this.productName, this.beginPrice, this.endPrice, this.originName, sortValue);
+  }
+
+  sortByPriceASC(sortValue: string) {
+    this.getAllProductPage(0, this.categoryId, this.productName, this.beginPrice, this.endPrice, this.originName, sortValue);
   }
 }

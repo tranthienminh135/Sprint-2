@@ -75,6 +75,7 @@ export class CheckoutComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.sendMessage();
   }
 
   createForm(customer: Customer, appUser: AppUser) {

@@ -110,7 +110,7 @@
         <div *ngIf="role == 'ROLE_ADMIN' && loginStatus == true" class="modal fade"
              id="exampleModalDelete{{product.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
              aria-hidden="true">
-          <div class="modal-dialog" role="document">
+          <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
               <div class="modal-header">
                 <h4 class="modal-title text-danger" id="exampleModalLabel">Cảnh báo!</h4>
@@ -125,7 +125,7 @@
                 </p>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-primary">Đồng ý xóa</button>
+                <button type="button" class="btn btn-primary" (click)="deleteProduct(product)">Đồng ý xóa</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
               </div>
             </div>

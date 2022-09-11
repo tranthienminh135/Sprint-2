@@ -137,9 +137,13 @@ export class HeaderComponent implements OnInit {
   getProductInCardByCustomer(customer: Customer) {
     this.totalProductInCart = 0;
     this.cartService.getProductInCardByCustomer(customer).subscribe((pos: ProductOrder[]) => {
-      this.productOrders = pos;
-      for (let i = 0; i < pos.length; i++) {
-        this.totalProductInCart += pos[i].quantity;
+      if (pos != null) {
+        this.productOrders = pos;
+        for (let i = 0; i < pos.length; i++) {
+          this.totalProductInCart += pos[i].quantity;
+        }
+      } else {
+        this.productOrders = [];
       }
     });
   }

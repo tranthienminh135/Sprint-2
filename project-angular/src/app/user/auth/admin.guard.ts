@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import {AuthService} from '../service/auth.service';
 import {map} from 'rxjs/operators';
 import {ToastrService} from 'ngx-toastr';
+import {CommonService} from '../service/common.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,8 @@ export class AdminGuard implements CanActivate {
 
   constructor(private authService: AuthService,
               private router: Router,
-              private toastrService: ToastrService) {
+              private toastrService: ToastrService,
+              private commonService: CommonService) {
   }
 
   canActivate(
@@ -30,7 +32,8 @@ export class AdminGuard implements CanActivate {
         return false;
       }
       this.router.navigateByUrl("/401").then(() => {
-        this.toastrService.warning("Vui lòng đăng nhập để thực hiện chức năng này!")
+        this.toastrService.warning("Vui lòng đăng nhập để thực hiện chức năng này!");
+        this.sendMessage();
       })
     })
     return this.authService.checkAdminRole().pipe(map(value => {
@@ -44,5 +47,7 @@ export class AdminGuard implements CanActivate {
       }
     }))
   }
-
+  sendMessage(): void {
+    this.commonService.sendUpdate('Success!');
+  }
 }
