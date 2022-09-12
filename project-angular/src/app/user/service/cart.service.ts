@@ -33,4 +33,8 @@ export class CartService {
   deleteProductInCard(po: ProductOrder):Observable<any> {
     return this.httpClient.post(API_URL + "/cart/delete", po);
   }
+
+  goPayment(customer: Customer): Observable<any> {
+    return this.httpClient.post(API_URL + "/cart/payment", customer);
+  }
 }

@@ -39,4 +39,14 @@ public interface IProductRepository extends JpaRepository<Product, Integer> {
 
     @Query(value = " select * from product where is_deleted = 0 ", nativeQuery = true)
     List<Product> findAllListProduct();
+
+    @Modifying
+    @Transactional
+    @Query(value = " UPDATE `product` SET `quantity` = (`quantity` - :quantity) WHERE (`id` = :id) ", nativeQuery = true)
+    void updateQuantity(@Param("quantity") Integer quantity,@Param("id") Integer id);
+
+    @Modifying
+    @Transactional
+    @Query(value = " UPDATE `product` SET `is_deleted` = 1 WHERE (`id` = :id) ", nativeQuery = true)
+    void updateIsDeleted(@Param("id") Integer id);
 }

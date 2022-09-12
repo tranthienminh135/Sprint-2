@@ -1,6 +1,8 @@
+import {Customer} from './customer';
+
 export interface AppUser {
   id?: number,
-  username?: number,
-  password?: number,
+  userName?: string,
   status?: boolean,
+  customer?: Customer,
 }

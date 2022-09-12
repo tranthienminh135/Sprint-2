@@ -27,15 +27,19 @@
         </thead>
         <tbody class="align-middle">
         <tr *ngFor="let po of productOrders; index as i">
-          <td class="align-middle"><a [routerLink]="" data-toggle="modal" [attr.data-target]="'#exampleModalCenter' + po.product.id">{{po.product.name}}</a></td>
+          <td class="align-middle"><a [routerLink]="" data-toggle="modal"
+                                      [attr.data-target]="'#exampleModalCenter' + po.product.id">{{po.product.name}}</a>
+          </td>
 
           <!-- Modal -->
-          <div class="modal fade" id="exampleModalCenter{{po.product.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal fade" id="exampleModalCenter{{po.product.id}}" tabindex="-1" role="dialog"
+               aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
               <div class="modal-content">
                 <div class="modal-header">
                   <h5 class="modal-title" id="exampleModalLongTitle">
-                    <a [routerLink]="['/product/detail', po.product.id]" (click)="closeModal(po.product.id)" class="nav-link text-info text-uppercase">
+                    <a [routerLink]="['/product/detail', po.product.id]" (click)="closeModal(po.product.id)"
+                       class="nav-link text-info text-uppercase">
                       {{po.product.name}}
                     </a>
                   </h5>
@@ -52,30 +56,36 @@
               </div>
             </div>
           </div>
-          <td class="align-middle">{{(po.product.price - (po.product.price * (po.product.category.discountPercent / 100))) - ((po.product.price - (po.product.price * (po.product.category.discountPercent / 100))) * po.product.discountPercent / 100) | currency: 'VND': ''}}<sup>đ</sup></td>
+          <td
+            class="align-middle">{{(po.product.price - (po.product.price * (po.product.category.discountPercent / 100))) - ((po.product.price - (po.product.price * (po.product.category.discountPercent / 100))) * po.product.discountPercent / 100) | currency: 'VND': ''}}
+            <sup>đ</sup></td>
           <td class="align-middle">
             <div class="input-group quantity mx-auto" style="width: 100px;">
               <div class="input-group-btn">
                 <button class="btn btn-sm btn-primary btn-minus" (click)="minusQuantity(po)" *ngIf="po.quantity > 1">
                   <i class="fa fa-minus"></i>
                 </button>
-                <button class="btn btn-sm btn-primary btn-minus" data-toggle="modal" [attr.data-target]="'#deleteMinusModal' + po.product.id" *ngIf="po.quantity <= 1">
+                <button class="btn btn-sm btn-primary btn-minus" data-toggle="modal"
+                        [attr.data-target]="'#deleteMinusModal' + po.product.id" *ngIf="po.quantity <= 1">
                   <i class="fa fa-minus"></i>
                 </button>
               </div>
 
               <!-- Modal -->
-              <div class="modal fade" id="deleteMinusModal{{po.product.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal fade" id="deleteMinusModal{{po.product.id}}" tabindex="-1" role="dialog"
+                   aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg" role="document">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title font-weight-bold text-uppercase text-primary" id="exampleModalLabel">Xóa sản phẩm khỏi giỏ hàng</h5>
+                      <h5 class="modal-title font-weight-bold text-uppercase text-primary" id="exampleModalLabel">Xóa
+                        sản phẩm khỏi giỏ hàng</h5>
                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                       </button>
                     </div>
                     <div class="modal-body">
-                      <p style="font-size: 20px">Bạn có muốn xóa sản phẩm <span class="text-primary">{{po.product.name}}</span> khỏi giỏ hàng không?</p>
+                      <p style="font-size: 20px">Bạn có muốn xóa sản phẩm <span
+                        class="text-primary">{{po.product.name}}</span> khỏi giỏ hàng không?</p>
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-primary" (click)="deleteProductInCart(po)">Xóa</button>
@@ -86,33 +96,41 @@
               </div>
               <input type="text" class="form-control form-control-sm bg-secondary text-center" [value]="po.quantity">
               <div class="input-group-btn">
-                <button class="btn btn-sm btn-primary btn-plus" (click)="plusQuantity(po)" *ngIf="po.quantity < po.product.quantity">
+                <button class="btn btn-sm btn-primary btn-plus" (click)="plusQuantity(po)"
+                        *ngIf="po.quantity < po.product.quantity">
                   <i class="fa fa-plus"></i>
                 </button>
-                <button class="btn btn-sm btn-primary btn-plus" (click)="maximumQuantity()" *ngIf="po.quantity >= po.product.quantity">
+                <button class="btn btn-sm btn-primary btn-plus" (click)="maximumQuantity()"
+                        *ngIf="po.quantity >= po.product.quantity">
                   <i class="fa fa-plus"></i>
                 </button>
               </div>
             </div>
           </td>
-          <td class="align-middle">{{((po.product.price - (po.product.price * (po.product.category.discountPercent / 100))) - ((po.product.price - (po.product.price * (po.product.category.discountPercent / 100))) * po.product.discountPercent / 100)) * po.quantity | currency: 'VND': ''}}<sup>đ</sup></td>
+          <td
+            class="align-middle">{{((po.product.price - (po.product.price * (po.product.category.discountPercent / 100))) - ((po.product.price - (po.product.price * (po.product.category.discountPercent / 100))) * po.product.discountPercent / 100)) * po.quantity | currency: 'VND': ''}}
+            <sup>đ</sup></td>
           <td class="align-middle">
-            <button class="btn btn-sm btn-primary" data-toggle="modal" [attr.data-target]="'#exampleModalDeleteButton' + po.product.id">
+            <button class="btn btn-sm btn-primary" data-toggle="modal"
+                    [attr.data-target]="'#exampleModalDeleteButton' + po.product.id">
               <i class="fa fa-times"></i>
             </button>
 
             <!-- Modal -->
-            <div class="modal fade" id="exampleModalDeleteButton{{po.product.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="exampleModalDeleteButton{{po.product.id}}" tabindex="-1" role="dialog"
+                 aria-labelledby="exampleModalLabel" aria-hidden="true">
               <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title font-weight-bold text-uppercase text-primary" id="exampleModalLabelDelete">Xóa sản phẩm khỏi giỏ hàng</h5>
+                    <h5 class="modal-title font-weight-bold text-uppercase text-primary" id="exampleModalLabelDelete">
+                      Xóa sản phẩm khỏi giỏ hàng</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>
                   </div>
                   <div class="modal-body">
-                    <p style="font-size: 20px">Bạn có muốn xóa sản phẩm <span class="text-primary">{{po.product.name}}</span> khỏi giỏ hàng không?</p>
+                    <p style="font-size: 20px">Bạn có muốn xóa sản phẩm <span
+                      class="text-primary">{{po.product.name}}</span> khỏi giỏ hàng không?</p>
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-primary" (click)="deleteProductInCart(po)">Xóa</button>
@@ -126,7 +144,7 @@
         <tr>
           <th colspan="5" class="text-center m-auto" *ngIf="productOrders.length <= 0">
             Không có sản phẩm trong giỏ hàng
-            <a [routerLink]="['/product/list']" >xem tất cả sản phẩm tại đây.</a>
+            <a [routerLink]="['/product/list']">xem tất cả sản phẩm tại đây.</a>
           </th>
         </tr>
         </tbody>
@@ -158,11 +176,39 @@
         </div>
         <div class="card-footer border-secondary bg-transparent">
           <div class="d-flex justify-content-between mt-2">
-            <h5 class="font-weight-bold">Tổng</h5>
-            <h5 class="font-weight-bold" *ngIf="productOrders.length > 0">{{totalMoney + 50000 | currency: 'VND': ''}}<sup>đ</sup></h5>
+            <h5 class="font-weight-bold">Tổng thanh toán</h5>
+            <h5 class="font-weight-bold" *ngIf="productOrders.length > 0">
+              {{totalMoney + 50000 | currency: 'VND': ''}}<sup>đ</sup>
+              - {{(totalMoney + 50000) / 23000 | currency: 'USD'}}
+            </h5>
             <h5 class="font-weight-bold" *ngIf="productOrders.length <= 0">0<sup>đ</sup></h5>
           </div>
-          <button class="btn btn-block btn-primary my-3 py-3">Thanh toán</button>
+          <!-- Button trigger modal -->
+          <button type="button" class="btn btn-block btn-primary my-3 py-3" data-toggle="modal"
+                  data-target="#exampleModalPayment">
+            Thanh toán
+          </button>
+
+          <!-- Modal -->
+          <div class="modal fade" id="exampleModalPayment" tabindex="-1" role="dialog"
+               aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabelPayment">CHỌN PHƯƠNG THỨC THANH TOÁN</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div id="payments" *ngIf="totalMoney >= 0"></div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

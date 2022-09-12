@@ -26,4 +26,8 @@ export class CustomerService {
   getAppUserFromUsername(username: string):Observable<AppUser> {
     return this.httpClient.get<AppUser>(API_URL + "/get/user/" + username);
   }
+
+  getAllCustomer(): Observable<Customer[]> {
+    return this.httpClient.get<Customer[]>(API_URL + "/customer/list")
+  }
 }

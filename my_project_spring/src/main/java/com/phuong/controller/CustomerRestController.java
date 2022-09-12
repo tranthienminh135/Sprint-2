@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
@@ -40,5 +41,16 @@ public class CustomerRestController {
         BeanUtils.copyProperties(customerDto, customer);
         this.customerService.save(customer);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/customer/list")
+    public ResponseEntity<List<Customer>> getAllCustomers() {
+        List<Customer> customerList = this.customerService.findAll();
+
+        if (customerList.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(customerList, HttpStatus.OK);
     }
 }

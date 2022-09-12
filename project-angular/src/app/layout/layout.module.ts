@@ -7,10 +7,11 @@ import {FooterComponent} from './footer/footer.component';
 import {HomeComponent} from './home/home.component';
 import {HttpClientModule} from '@angular/common/http';
 import {ShareModule} from '../share/share.module';
+import { LoadingComponent } from './loading/loading.component';
 
 
 @NgModule({
-  declarations: [HeaderComponent, FooterComponent, HomeComponent],
+  declarations: [HeaderComponent, FooterComponent, HomeComponent, LoadingComponent],
   exports: [
     HeaderComponent,
     FooterComponent

@@ -7,6 +7,8 @@ import com.phuong.service.ICustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CustomerService implements ICustomerService {
 
@@ -27,5 +29,10 @@ public class CustomerService implements ICustomerService {
         Customer c = this.customerRepository.save(customer);
         c.getAppUser().setStatus(true);
         this.appUserRepository.updateStatus(c.getAppUser().getId());
+    }
+
+    @Override
+    public List<Customer> findAll() {
+        return this.customerRepository.findAll();
     }
 }

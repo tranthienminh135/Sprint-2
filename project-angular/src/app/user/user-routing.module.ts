@@ -6,6 +6,9 @@ import {LoginGuard} from './auth/login.guard';
 import {InfoComponent} from './info/info.component';
 import {CheckoutComponent} from './checkout/checkout.component';
 import {AuthGuard} from './auth/auth.guard';
+import {ChatComponent} from './chat/chat.component';
+import {AdminDashboardComponent} from './admin-dashboard/admin-dashboard.component';
+import {AdminGuard} from './auth/admin.guard';
 
 
 const routes: Routes = [
@@ -27,6 +30,16 @@ const routes: Routes = [
     path: 'checkout',
     component: CheckoutComponent,
     canActivate: [AuthGuard]
+  },
+  {
+    path: 'chat',
+    component: ChatComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'dashboard',
+    component: AdminDashboardComponent,
+    canActivate: [AdminGuard]
   }
 ];
 

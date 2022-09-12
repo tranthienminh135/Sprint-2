@@ -4,6 +4,7 @@ import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.sql.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -16,7 +17,9 @@ public class Bill {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String name;
+    private String code;
+
+    private Date creationDate;
 
     @Column(columnDefinition = "bit(1) default 0")
     private Boolean isDeleted;

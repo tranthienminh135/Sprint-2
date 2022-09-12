@@ -44,6 +44,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   public totalTenMi: number = 0;
   public totalLetThanTenMi: number = 0;
   sort: string = 'id';
+  sortTitle: string = 'Sắp xếp theo';
 
   constructor(private productService: ProductService,
               private categoryService: CategoryService,
@@ -294,14 +295,17 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   sortByDate(sortValue: string) {
+    this.sortTitle = "Ngày phát hành"
     this.getAllProductPage(0, this.categoryId, this.productName, this.beginPrice, this.endPrice, this.originName, sortValue);
   }
 
   sortByPriceDESC(sortValue: string) {
+    this.sortTitle = "Giá cao đến thấp"
     this.getAllProductPage(0, this.categoryId, this.productName, this.beginPrice, this.endPrice, this.originName, sortValue);
   }
 
   sortByPriceASC(sortValue: string) {
+    this.sortTitle = "Giá thấp đến cao"
     this.getAllProductPage(0, this.categoryId, this.productName, this.beginPrice, this.endPrice, this.originName, sortValue);
   }
 }

@@ -1,6 +1,7 @@
 package com.phuong.service;
 
 import com.phuong.dto.ErrorDto;
+import com.phuong.dto.PaymentDto;
 import com.phuong.model.Customer;
 import com.phuong.model.ProductOrder;
 
@@ -16,4 +17,6 @@ public interface IProductOrderService {
     Boolean plusQuantity(ProductOrder productOrder);
 
     Boolean findProductOrder(ProductOrder productOrder);
+
+    PaymentDto goPayment(Customer customer);
 }
